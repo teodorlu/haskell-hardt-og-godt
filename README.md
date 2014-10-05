@@ -6,7 +6,7 @@ En introduksjon til Haskell med noe for enhver. Løst program:
 ## Funksjoner
 
 - Minimal funksjonssyntaks
-- Navnløse funksjoner: λ
+- Navnløse funksjoner: **λ**
 
 - Currying
 - 
