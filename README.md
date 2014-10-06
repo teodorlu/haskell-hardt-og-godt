@@ -2,6 +2,10 @@
 
 En introduksjon til Haskell med noe for enhver. Løst program følger.
 
+- Lovnad: det vil komme noe du ikke skjønner
+- Lovnad: det vil komme noe du skjønner
+- Lovnad: jeg vil gjøre en typefeil i løpet av foredraget
+
 ## Haskell
 
 - Ren funksjonell programmering
