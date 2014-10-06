@@ -1,6 +1,6 @@
 # Haskell: hardt og godt
 
-En introduksjon til Haskell med noe for enhver. Løst program følger.
+En introduksjon til Haskell med noe for enhver. (Slides følger også)[http://htmlpreview.github.io/?https://raw.githubusercontent.com/teodorlu/haskell-hardt-og-godt/master/slides.html]. Løst program følger.
 
 - **Lovnad**: det vil komme noe du skjønner
 - **Lovnad**: det vil komme noe du ikke skjønner
