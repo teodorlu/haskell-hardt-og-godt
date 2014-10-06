@@ -2,8 +2,8 @@
 
 En introduksjon til Haskell med noe for enhver. Løst program følger.
 
-- Lovnad: det vil komme noe du ikke skjønner
 - Lovnad: det vil komme noe du skjønner
+- Lovnad: det vil komme noe du ikke skjønner
 - Lovnad: jeg vil gjøre en typefeil i løpet av foredraget
 
 ## Haskell
@@ -27,6 +27,12 @@ En introduksjon til Haskell med noe for enhver. Løst program følger.
 	- Vår egen Maybe: Kanskje
 - Records: hvordan å samle flere
 - Typeklasser
+
+## Lister
+
+- Iterasjon: rekursjon og pattern matching
+- Iterasjon: Høyere Ordens Programmering
+- Demo: Capitalizer
 
 ## Vår egen monade
 
