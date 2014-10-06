@@ -132,8 +132,8 @@ layout: false
 ## Agenda
 
 1. Oppsett
-2. Haskell?
-3. Funksjoner
+3. Haskell?
+2. Funksjoner
 4. Typer
 5. Monader
 6. IO
@@ -145,14 +145,12 @@ template: inverse
 
 Editor og kompilator
 
-<!-- Vi gjør det enkelt: tekstbehandler, [Sublime](http://www.sublimetext.com/3); og kompilator, [ghc](http://www.haskell.org/ghc/)  -->
-
 ???
 - Kode eller lene seg tilbake
 - Hva dere trenger av verktøy for å
   - Skrive Haskell
   - Kjøre Haskell
-- Pen syntaks, IDE trengs i mindre grad
+- Haskell har pen syntaks, IDE trengs i mindre grad
 
 ---
 
@@ -188,6 +186,103 @@ Prelude>
 - Hvis du fikk en liknende beskjed, er alt klart.
 
 ---
+template:inverse
+
+# Programmeringsspråket Haskell
+Ulikt alt annet
+
+---
+
+## Ren funksjonell programmering
+
+- Funksjoner i imperativ programmering (Java, C, Python, ...)
+
+  - er noe som kan hente informasjon fra argumentene sine og verden, gjøre noe med argumentene sine og verden, før den returnerer noe
+--
+
+  - Altså en *gruppering av instruksjoner (befalinger)*
+
+.footnote[**imperativ** *m1* ``av lat imperare 'befale, byde'`` [[1](http://www.nob-ordbok.uio.no/perl/ordbok.cgi?OPP=imperativ&bokmaal=+&ordbok=begge)]]
+--
+
+```java
+int getAge(Person person) {
+  Rocket rocket = RocketStore.nextAvailable();
+  rocket.load(person);
+  kill(person);
+  launch(rocket);
+  return person.age;
+}
+```
+
+---
+
+## Ren funksjonell programmering
+
+- Funksjoner i matematikk
+
+  - er en relasjon fra en mengde (type) til en annen
+  - **Og ingenting annet!**
+
+
+--
+
+- Funksjoner i Haskell er matematiske funksjoner
+
+--
+
+```haskell
+addOne :: Int -> Int    -- f er en relasjon fra heltall til heltall
+                        -- ... og gjør ingenting annet!
+```
+
+(Sånn skriver vi typer i Haskell)
+
+---
+
+## Sterk automatisk typing
+
+--
+
+### Sterk typing
+- Kompilatoren *veit* typen
+- Java, C#, C++, Scala, Haskell
+
+```java
+    double area = Math.pi * radius * radius;
+    double circumference = 2 * Math.pi * radius;
+//  ^----^ kompilatoren klager om disse er feil   
+```
+
+--
+
+### Automatisk typing
+- Kompilatoren kan regne ut typen på egen hånd
+- C# (delvis), Scala, Haskell
+
+```haskell
+addOne :: Int -> Int
+addOne x = x + 1
+```
+
+er (nesten) det samme som
+
+
+```haskell
+addOne x = x + 1
+```
+
+
+---
+
+## Lazy
+
+Verdier evalueres når de trengs
+
+```haskell
+
+---
+
 name: last-page
 template: inverse
 
