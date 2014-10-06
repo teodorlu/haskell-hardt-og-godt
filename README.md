@@ -2,9 +2,9 @@
 
 En introduksjon til Haskell med noe for enhver. Løst program følger.
 
-- Lovnad: det vil komme noe du skjønner
-- Lovnad: det vil komme noe du ikke skjønner
-- Lovnad: jeg vil gjøre en typefeil i løpet av foredraget
+- **Lovnad**: det vil komme noe du skjønner
+- **Lovnad**: det vil komme noe du ikke skjønner
+- **Lovnad**: jeg vil gjøre en typefeil i løpet av foredraget
 
 ## Haskell
 
@@ -21,7 +21,7 @@ En introduksjon til Haskell med noe for enhver. Løst program følger.
 
 ## Typesystemet
 
-- Grunnleggende datatyper: Int, Char, Double
+- Grunnleggende datatyper: Int, Char, Double, Tuple
 - Algebraiske datatyper
 	- Vår egen List: Liste
 	- Vår egen Maybe: Kanskje
