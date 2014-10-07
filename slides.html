@@ -186,6 +186,56 @@ Prelude>
 - Hvis du fikk en liknende beskjed, er alt klart.
 
 ---
+
+template: inverse
+# Funksjoner i haskell
+Rett på sak.
+
+---
+
+## Syntax
+
+```haskell
+         add      x y  =  x + y
+-- funksjonsnavn input    output
+-- (Kommentarer starter med --)
+```
+
+- Lagre i ``functions.hs`` og last inn i GHCi
+
+```c
+~ ghci
+GHCi, version 7.6.3: http://www.haskell.org/ghc/  :? for help
+Loading package ghc-prim ... linking ... done.
+Loading package integer-gmp ... linking ... done.
+Loading package base ... linking ... done.
+Prelude> :l functions.hs 
+[1 of 1] Compiling Main             ( functions.hs, interpreted )
+Ok, modules loaded: Main.
+*Main> addOne 1
+2
+```
+
+---
+## Syntax
+
+Oppgave: implementér denne java-funksjonen i Haskell
+
+```java
+int squaredSum(int x, int y) {
+  return x * x + y * y
+}
+```
+
+--
+
+```haskell
+squaredSum x y = x*x + y*y
+```
+
+Rent, ikke sant?
+
+---
 template:inverse
 
 # Programmeringsspråket Haskell
@@ -249,29 +299,21 @@ addOne :: Int -> Int    -- f er en relasjon fra heltall til heltall
 - Java, C#, C++, Scala, Haskell
 
 ```java
-    double area = Math.pi * radius * radius;
-    double circumference = 2 * Math.pi * radius;
-//  ^----^ kompilatoren klager om disse er feil   
+double circleArea(double radius) {
+  return Math.pi * radius * radius;
+}
 ```
 
 --
 
 ### Automatisk typing
-- Kompilatoren kan regne ut typen på egen hånd
+- Kompilatoren kan regne ut typen på egen hånd: trenger ikke spesifiseres!
 - C# (delvis), Scala, Haskell
 
 ```haskell
-addOne :: Int -> Int
-addOne x = x + 1
+circleArea r = pi * r * r     -- Som en vanlig funksjon
+circleArea = \r -> pi * r * r -- Som en anonym funksjon
 ```
-
-er (nesten) det samme som
-
-
-```haskell
-addOne x = x + 1
-```
-
 
 ---
 
@@ -280,6 +322,15 @@ addOne x = x + 1
 Verdier evalueres når de trengs
 
 ```haskell
+squares = map (^2) [1..]
+tenSquares = take 10 squares
+```
+
+... der take n xs returnerer de n første elemenene fra xs
+
+```haskell
+take :: Int -> [a] -> [a]
+```
 
 ---
 
