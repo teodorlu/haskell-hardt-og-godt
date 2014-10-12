@@ -25,6 +25,7 @@
       }
       li p { line-height: 1.25em; }
       .red { color: #fa0000; }
+      .white { color: white; }
       .large { font-size: 2em; }
       a, a > code {
         color: rgb(249, 38, 114);
@@ -132,11 +133,11 @@ layout: false
 ## Agenda
 
 1. Oppsett
-3. Haskell?
 2. Funksjoner
-4. Typer
-5. Monader
-6. IO
+2. Lister
+3. Typer
+4. Monader
+5. IO
 
 ---
 template: inverse
@@ -186,14 +187,15 @@ Prelude>
 - Hvis du fikk en liknende beskjed, er alt klart.
 
 ---
-
+name: funksjoner
 template: inverse
+
 # Funksjoner i haskell
 Rett på sak.
 
 ---
 
-## Syntax
+## Funksjonssyntax
 
 ```haskell
          add      x y  =  x + y
@@ -203,7 +205,7 @@ Rett på sak.
 
 - Lagre i ``functions.hs`` og last inn i GHCi
 
-```c
+```html
 ~ ghci
 GHCi, version 7.6.3: http://www.haskell.org/ghc/  :? for help
 Loading package ghc-prim ... linking ... done.
@@ -212,14 +214,14 @@ Loading package base ... linking ... done.
 Prelude> :l functions.hs 
 [1 of 1] Compiling Main             ( functions.hs, interpreted )
 Ok, modules loaded: Main.
-*Main> addOne 1
+Main> addOne 1
 2
 ```
 
 ---
-## Syntax
+## Funksjonssyntax: oppgave
 
-Oppgave: implementér denne java-funksjonen i Haskell
+Implementér denne java-funksjonen i Haskell:
 
 ```java
 int squaredSum(int x, int y) {
@@ -233,13 +235,537 @@ int squaredSum(int x, int y) {
 squaredSum x y = x*x + y*y
 ```
 
-Rent, ikke sant?
+Konsist, ikke sant?
+
+---
+
+## Mønstergjenkjenning
+
+```haskell
+isTeodor "Teodor" = True
+isTeodor navn     = False
+```
+
+--
+
+... men vi trenger egentlig ikke bruke navn i det hele tatt! _ matcher alt.
+
+
+```haskell
+isTeodor "Teodor" = True
+isTeodor _        = False
+```
+
+--
+
+*Haskell bruker det første mønsteret som matcher.*
+
+---
+
+## Mønstergjenkjenning: oppgave
+
+Lag funksjonen ``lucky``.
+
+Returnér ``"LUCKY NUMBER 7!"`` om du får inn ``7``, ``"Too bad :("`` ellers.
+
+--
+
+```haskell
+lucky 7 = "LUCKY NUMBER 7!"
+lucky _ = "Too bad :("
+```
+
+---
+
+## Anonyme funksjoner
+
+Kommer fra labdakalkyle (lambda calculus, λ-calculus).
+
+Kan lage funksjoner uten å gi dem navn, og bruke dem over alt.
+
+```haskell
+addOne = \x -> x + 1
+```
+
+--
+
+Prøv i GHCi:
+```html
+Main> (\x -> x + 1) 2
+3
+```
+
+---
+
+## Å finne typen til funksjoner
+
+Kan vi gjøre i GHCi. Funksjonene fra forrige kapittel har jeg lagra i functions.hs.
+
+``:l`` er kort for ``:load``, som lar deg bruke funksjoner og typer fra ei fil.
+
+```html
+Prelude> :l functions.hs 
+...
+Main> addOne 4
+5
+```
+--
+
+``:t`` er kort for ``:type``.
+
+```html
+Main> :t addOne 
+addOne :: Int -> Int
+\x -> x + 1 :: Num a => a -> a
+```
+
+---
+
+## Typen til funksjoner
+
+<!-- background-image: url(images/curry.jpg) -->
+
+```haskell
+addOne :: Int -> Int
+addOne x = x + 1
+
+add :: Int -> Int -> Int
+add x y = x + y
+```
+
+Hvordan gir dette mening?
+
+--
+
+En annen måte å skrive ``add``:
+
+```haskell
+add :: Int -> (Int -> Int)
+add x y = x + y
+```
+
+``add`` returnerer en funksjon!
+
+---
+
+## Currying; *å legge ved argumenter*
+
+```html
+Main> :t add
+add :: Integer -> Integer -> Integer
+Main> :t (add 1)
+(add 1) :: Integer -> Integer
+Main> :t ((add 1) 2)
+((add 1) 2) :: Integer
+```
+
+Hver gang vi spesifieserer et argument, får vi en ny funksjon!
+
+Når vi ikke har igjen flere argumenter, får vi ut en verdi (Integer).
+
+---
+
+## Operatorer
+
+- ``+``, ``-``, ``*``, ``/``, ``^`` er noen operatorer i Haskell.
+
+- Operatorene er vanlige funksjoner som skrives *mellom* argumetene sine.
+
+- Setter vi parantes rundt operatoren, kan vi bruke den som en funksjon.
+
+```html
+Main> 1 + 2
+3
+Main> (+) 1 2
+3
+```
+
+--
+Rekkefølgen er som vi forventer:
+
+```html
+Main> (2/) 5
+0.4
+Main> (5/) 2
+2.5
+```
+
+---
+
+## Vanskeligere oppgave
+
+Lag funksjonen ``doTwice`` som tar inn en funksjon ``f`` og et argument ``x``. Returner f(f(x)).
+
+Eksempelbruk:
+```haskell
+> doTwice (+1) 3
+5
+> doTwice (*2) 3
+12 
+```
+
+--
+
+```haskell
+doTwice f x = f (f x)
+```
+
+---
+
+## Enda vanskeligere oppgave
+
+- Lag funksjonen ``compose`` som tar inn to funksjoner ``f`` og ``g`` og et argument ``x``, og returnerer f(g(x)).
+
+- Definér ``doTwice`` med ``compose``.
+
+- Definér ``plusTwoTimesThree`` ved hjelp av ``compose``.
+
+--
+
+```haskell
+compose f g x = f (g x)
+doTwice f = compose f f
+plusTwoTimesThree = compose (*3) (+2)
+```
+
+--
+Hva er typene til ``compose`` og ``doTwice``?
+
+???
+- Finne fram manuelt: hva må vi kreve?
+- Sjekke GHCi
+
+--
+
+```haskell
+compose :: (b -> c) (a -> b) -> a -> c
+compose f g x = f (g x)
+
+doTwice :: (a -> a) -> a -> a
+doTwice f = compose f f
+
+```
+???
+NOte
+
+---
+template: inverse
+name: lister
+
+# Lister
+
+.footnote[<3]
+---
+
+## Å lage lister i Haskell
+
+```html
+Main> []
+[]
+Main> [1,2,3,4]
+[1,2,3,4]
+```
+``String`` i Haskell er en liste av ``Char``:
+
+```html
+Main> ['a','b','c']
+"abc"
+*Main> :t ['a','b','c']
+['a','b','c'] :: [Char]
+*Main> :t "abc"
+"abc" :: [Char]
+```
+
+---
+
+## Å endre lister i Haskell
+
+Legg til elementer med ``:`` og pattern matching
+
+```html
+Main> 0:[1,2,3,4]
+[0,1,2,3,4]
+```
+
+Hent ut elemnter med ``:``
+```html
+Main> let (head:tail) = [1,2,3,4]
+Main> head
+1
+Main> tail
+[2,3,4]
+```
+
+---
+
+## Oppgave: telling!
+
+Lag funksjonen ``countToTen`` som teller fra ``x`` til 10. Anta ``x <= 10``.
+
+```html
+Main> countToTen 3
+[3,4,5,6,7,8,9,10]
+Main> countToTen 9
+[9,10]
+```
+
+--
+
+```haskell
+countToTen 10 = [10]
+countToTen n = n : countToTen (n+1)
+```
+
+Rekursjon!
+
+---
+
+## Oppgave: telling!
+
+```haskell
+countToTen 10 = [10]
+countToTen n = n : countToTen (n+1)
+```
+--
+
+fungerer som følger:
+
+``countToTen 7 = 7 : countToTen 8``
+
+--
+
+``countToTen 7 = 7 : 8 : countToTen 9``
+
+--
+
+``countToTen 7 = 7 : 8 : 9 : countToTen 10``
+
+--
+
+``countToTen 7 = 7 : 8 : 9 : [10]``
+
+--
+
+``countToTen 7 = 7 : 8 : [9, 10]``
+
+--
+
+``countToTen 7 = 7 : [8, 9, 10]``
+
+--
+
+``countToTen 7 = [7, 8, 9, 10]``
+
+---
+
+## Guards
+
+Hva om jeg ``countToTen 11`` ... ?
+
+--
+
+Bedre versjon:
+
+```haskell
+countToTen' n
+  | n > 10    = []
+  | otherwise = n : countToTen' (n+1)
+```
+
+---
+
+## Oppgave: bartender
+
+Lag en funksjon
+
+```haskell
+bartender :: Int -> String
+```
+
+som fordeler lovlig så folk blir fullest mulig.
+
+```html
+Main> bartender 5
+"Milk"
+Main> bartender 20
+"Whisky"
+Main> bartender 18
+"Beer"
+```
+---
+
+## Oppgave: bartender
+
+```haskell
+bartender n
+  | n < 18    = "Milk"
+  | n < 20    = "Beer"
+  | otherwise = "Whisky"
+```
+
+---
+
+## Funksjoner som tar inn lister?
+
+Eksempel: bruke en funksjon på alle elementene i ei liste.
+
+Denne finnes allerede, og heter ``map``. Vi lager vår egen, og kaller den ``map'``, som må se noe sånt ut:
+
+```haskell
+map' :: (a -> b) -> [a] -> [b]
+map'    f           xs  = ?
+```
+
+--
+Hva skjer om vi får inn ei tom liste?
+
+```haskell
+map' f [] = []
+```
+
+--
+Da kan vi lage en som matcher lister med ett element eller flere:
+
+```haskell
+map' f (x:xs) = f x : map f xs
+```
+
+???
+Hvorfor trenger vi parantesen?
+
+---
+
+## Oppgave: filtrere elementer fra liste
+
+```haskell
+filter' :: (a -> Bool) -> [a] -> [a]
+filter'    cond           xs  = ?
+```
+
+```html
+Main> filter' (==42) [3,5,2,7,42,6]
+[42]
+Main> filter' (>9000) [10,100,1000,10000]
+[10000]
+*Main> let minimumAcceptablePartneAge = \age -> age / 2 + 7
+*Main> filter' (\y -> y > minimumAcceptablePartneAge 23) [13..25]
+[19.0,20.0,21.0,22.0,23.0,24.0,25.0]
+```
+--
+Kanskje har dere fått noe sånt?
+
+```haskell
+filter' cond [] = []
+filter' cond (x:xs)
+  | cond x    = x : filter' cond xs
+  | otherwise = filter' cond xs
+```
+
+---
+
+template: inverse
+
+# Algebraiske datatyper
+
+---
+
+## "Jeg kan java, der har vi mange klasser, dette blir lett!"
+
+--
+
+Gløm hva dere har lært i Java.
+
+--
+
+Virkelig, gløm det.
+
+--
+
+Typesystemet til Haskell er overlegent bedre.
+
+---
+
+background-image: url(images/languages-as-seen-by.png)
+
+---
+
+background-image: url(images/languages-as-seen-by-highlight.png)
+
+---
+
+## Typedeklarasjoner
+
+Vi kan oppgi typen til funksjoner og variable hvis vi føler for det.
+
+```haskell
+addOne :: Int -> Int
+addOne x = x + 1
+
+myAge :: Int
+myAge = 42
+```
+
+--
+
+... eller vi kan bruke en litt kortere form
+
+```haskell
+yearsSinceWarinusWasStonedToDeath = 1337 :: Int
+```
+
+---
+
+## En enkel algebraisk datatype
+
+Betydning: *sammensatte datatyper*.
+
+```haskell
+data TrafficLightState = RedLight | YellowLight | GreenLight
+  deriving (Show, Eq)
+```
+.footnote[``deriving (Show, Eq)`` betyr at Haskell finner ut hvordan denne typen skal vises (``Show``) og sjekkes for likhet (``Eq``). Denne jobben skal vi gjøre selv seinere.]
+
+Et trafikklys er enten rødt, gult eller grønt.
+
+---
+
+## Oppgave: en enkel algebraisk datatype
+
+```haskell
+data TrafficLightState = RedLight | YellowLight | GreenLight
+  deriving (Show, Eq)
+
+data CarSpeed = FastDriving | SlowDriving
+  deriving (Show, Eq)
+```
+
+Lag ``shouldStop`` som best etter trafikkreglene:
+
+```haskell
+shouldStop :: CarSpeed -> TrafficLightState -> Bool
+```
+
+--
+
+```haskell
+shouldStop :: CarSpeed -> TrafficLightState -> Bool
+shouldStop    _           RedLight           = True
+shouldStop    _           GreenLight         = False
+shouldStop    speed       YellowLight        = speed == SlowDriving
+```
+---
+
+## En 
 
 ---
 template:inverse
 
 # Programmeringsspråket Haskell
-Ulikt alt annet
+Ulikt alt annet du har sett
+
+--
+
+.footnote[... for andre enn matematikere]
 
 ---
 
@@ -283,10 +809,11 @@ int getAge(Person person) {
 
 ```haskell
 addOne :: Int -> Int    -- f er en relasjon fra heltall til heltall
-                        -- ... og gjør ingenting annet!
+                        -- ... og ingenting annet!
 ```
 
-(Sånn skriver vi typer i Haskell)
+- Imperative språk: funksjoner *gjør* noe
+- Deklarative språk: funksjoner *er* noe
 
 ---
 
@@ -341,7 +868,7 @@ template: inverse
 
 Slides ved hjelp av [remark](http://github.com/gnab/remark).
     </textarea>
-    <script src="http://gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript"></script>
+    <script src="remark.min.js" type="text/javascript"></script>
     <!-- <script type="text/javascript">
       var hljs = remark.highlighter.engine;
     </script> -->
