@@ -100,4 +100,4 @@ fathersfather' p = (father p) `bindKanskje` father
 mothersfather' :: Person -> Kanskje Person
 mothersfather' p = (mother p) `bindKanskje` mother
 
-
+grandfathers p = combineKanskje (fathersfather' p) (mothersfather' p)
