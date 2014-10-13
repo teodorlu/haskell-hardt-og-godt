@@ -30,7 +30,7 @@ data Vector2 = Vector2 Double Double
   deriving (Show, Eq)
 
 vector2Length :: Vector2 -> Double
-vector3Length (Vector2 x y) = sqrt (x*x + y*y)
+vector2Length (Vector2 x y) = sqrt (x*x + y*y)
 
 scalarMult2 :: Double -> Vector2 -> Vector2
 scalarMult2 a (Vector2 x y) = Vector2 (a*x) (a*y)
@@ -39,9 +39,40 @@ instance Vector Vector2 where
 	vectorLength = vector2Length
 	scalarMult   = scalarMult2
 
-data PersonInfo = PersonInfo {
-	name :: String,
-	age :: Int
-}
+data Kanskje a = Tull | Bare a
 	deriving (Show, Eq)
 
+atIndex :: [a] -> Int -> Kanskje a
+atIndex [] _ = Tull
+atIndex (x:xs) i
+	| i <  0    = Tull
+	| i == 0    = Bare x
+	| otherwise = atIndex xs (i-1)
+
+data Person = Person {
+	name :: String,
+	father :: Kanskje Person,
+	mother :: Kanskje Person
+} deriving (Show, Eq)
+
+leif = Person "Leif" Tull Tull
+tore = Person "Tore" (Bare leif) Tull
+
+alf = Person "Alf" Tull Tull
+hanne = Person "Hanne" (Bare alf) Tull
+
+teodor = Person "Teodor" (Bare tore) (Bare hanne)
+
+farfar :: Person -> Kanskje Person
+farfar person =
+  case father person of Bare f -> father f
+                        otherwise -> Tull
+
+morfar :: Person -> Kanskje Person
+morfar person =
+  case mother person of Bare m -> father m
+                        otherwise -> Tull
+
+bestefedre person = case farfar person of Bare ff -> case morfar person of Bare mf -> Bare (ff, mf)
+                                                                           otherwise -> Tull
+                                          otherwise -> Tull

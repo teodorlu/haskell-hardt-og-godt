@@ -450,6 +450,110 @@ doTwice f = compose f f
 NOte
 
 ---
+name: om-haskell
+template:inverse
+
+# Programmeringsspråket Haskell
+Ulikt alt annet du har sett
+
+--
+
+.footnote[... for andre enn matematikere]
+
+---
+
+## Ren funksjonell programmering
+
+- Funksjoner i imperativ programmering (Java, C, Python, ...)
+
+  - er noe som kan hente informasjon fra argumentene sine og verden, gjøre noe med argumentene sine og verden, før den returnerer noe
+--
+
+  - Altså en *gruppering av instruksjoner (befalinger)*
+
+.footnote[**imperativ** *m1* ``av lat imperare 'befale, byde'`` [[1](http://www.nob-ordbok.uio.no/perl/ordbok.cgi?OPP=imperativ&bokmaal=+&ordbok=begge)]]
+--
+
+```java
+int getAge(Person person) {
+  Rocket rocket = RocketStore.nextAvailable();
+  rocket.load(person);
+  kill(person);
+  launch(rocket);
+  return person.age;
+}
+```
+
+---
+
+## Ren funksjonell programmering
+
+- Funksjoner i matematikk
+
+  - er en relasjon fra en mengde (type) til en annen
+  - **Og ingenting annet!**
+
+--
+
+- Funksjoner i Haskell er matematiske funksjoner
+
+--
+
+```haskell
+addOne :: Int -> Int    -- f er en relasjon fra heltall til heltall
+                        -- ... og ingenting annet!
+```
+
+- Imperative språk: funksjoner *gjør* noe
+- Deklarative språk: funksjoner *er* noe
+
+---
+
+## Sterk automatisk typing
+
+--
+
+### Sterk typing
+- Kompilatoren *veit* typen
+- Java, C#, C++, Scala, Haskell
+
+```java
+double circleArea(double radius) {
+  return Math.pi * radius * radius;
+}
+```
+
+--
+
+### Automatisk typing
+- Kompilatoren kan regne ut typen på egen hånd: trenger ikke spesifiseres!
+- C# (delvis), Scala, Haskell
+
+```haskell
+circleArea r = pi * r * r     -- Som en vanlig funksjon
+circleArea = \r -> pi * r * r -- Som en anonym funksjon
+```
+
+---
+
+## Lazy
+
+Verdier evalueres først når de trengs
+
+```haskell
+squares = map (^2) [1..]
+tenSquares = take 10 squares
+```
+
+... der take n xs returnerer de n første elemenene fra xs
+
+```haskell
+take :: Int -> [a] -> [a]
+```
+
+
+
+---
 template: inverse
 name: lister
 
@@ -666,7 +770,7 @@ filter' cond (x:xs)
 name: datatyper
 template: inverse
 
-# Algebraiske datatyper
+# Datatyper
 
 ---
 
@@ -847,20 +951,34 @@ Litt bruk:
 Main> let teodor = PersonInfo {name = "Teodor", age = 23}
 Main> teodor
 PersonInfo {name = "Teodor", age = 23}
+
+Main> :t PersonInfo
+PersonInfo :: String -> Int -> PersonInfo
 Main> let frans = PersonInfo "Frans" 24
 Main> frans
 PersonInfo {name = "Frans", age = 24}
+```
+
+---
+
+## Records: felter har navn
+
+```haskell
+data PersonInfo = PersonInfo {
+  name :: String,
+  age :: Int
+}
+  deriving (Show, Eq)
+```
+
+``name`` og ``age`` er funksjoner Haskell lager for oss:
+
+```html
 Main> name teodor 
 "Teodor"
 Main> age frans 
 24
-```
 
---
-
-``name`` og ``age`` er autogenererte funksjoner:
-
-```html
 Main> :t name
 name :: PersonInfo -> String
 Main> :t age
@@ -869,11 +987,15 @@ age :: PersonInfo -> Int
 
 ---
 name: typeklasser
-template: inverse
 
-# Typeklasser
+## Typeklasser
 
-Egenskaper ved datatyper
+Egenskaper ved datatyper.
+
+- ``Eq``: typer som kan sjekkes for likhet
+- ``Show``: typer som kan vises
+- ``Num``: typer som kan oppføre seg som tall
+  - ``Int``, ``Double``, ``Float``, ..., er instanser
 
 --
 
@@ -914,7 +1036,7 @@ data Vector2 = Vector2 Double Double
   deriving (Show, Eq)
 
 vector2Length :: Vector2 -> Double
-vector3Length (Vector2 x y) = sqrt (x*x + y*y)
+vector2Length (Vector2 x y) = sqrt (x*x + y*y)
 
 scalarMult2 :: Double -> Vector2 -> Vector2
 scalarMult2 a (Vector2 x y) = Vector2 (a*x) (a*y)
@@ -925,105 +1047,153 @@ instance Vector Vector2 where
 ```
 
 ---
-name: om-haskell
-template:inverse
+template: inverse
+name: monader
 
-# Programmeringsspråket Haskell
-Ulikt alt annet du har sett
+# Monader
+
+Nå kommer de snikende.
+
+
+---
+name: kanskje
+
+## Kanskje?
+
+```haskell
+atIndex :: [a] -> Int -> a
+atIndex xs index = ?
+```
 
 --
 
-.footnote[... for andre enn matematikere]
+Veldefinert dersom ``index >= 0 && index < length xs``. Hva gjør vi ellers? Forslag?
+
+--
+
+```haskell
+atIndex :: [a] -> Int -> Kanskje a
+```
 
 ---
 
-## Ren funksjonell programmering
+## Kanskje.
 
-- Funksjoner i imperativ programmering (Java, C, Python, ...)
+```haskell
+data Kanskje a = Bare a | Tull
+  deriving (Show, Eq)
+```
+*``Kanskje a`` betyr at vi kan bytte ut ``a`` med typen vi vil.* Vi kan ha ``Kanskje Int``, ``Kanskje String`` eller ``Kanskje TrafficLightState``.
 
-  - er noe som kan hente informasjon fra argumentene sine og verden, gjøre noe med argumentene sine og verden, før den returnerer noe
 --
 
-  - Altså en *gruppering av instruksjoner (befalinger)*
+```haskell
+atIndex :: [a] -> Int -> Kanskje a
+atIndex [] _ = Tull
+atIndex (x:xs) i
+  | i <  0    = Tull
+  | i == 0    = Bare x
+  | otherwise = atIndex xs (i-1)
+```
 
-.footnote[**imperativ** *m1* ``av lat imperare 'befale, byde'`` [[1](http://www.nob-ordbok.uio.no/perl/ordbok.cgi?OPP=imperativ&bokmaal=+&ordbok=begge)]]
 --
 
-```java
-int getAge(Person person) {
-  Rocket rocket = RocketStore.nextAvailable();
-  rocket.load(person);
-  kill(person);
-  launch(rocket);
-  return person.age;
+Hvorfor norsk?
+
+--
+
+```haskell
+data Maybe a = Just a | Nothing
+```
+
+``Kanskje`` finnes allerede!
+
+---
+
+## Personer
+
+Mulighet:
+
+```haskell
+data Person = Person {
+  name :: String,
+  father :: Person,
+  mother :: Person
 }
 ```
 
----
-
-## Ren funksjonell programmering
-
-- Funksjoner i matematikk
-
-  - er en relasjon fra en mengde (type) til en annen
-  - **Og ingenting annet!**
-
---
-
-- Funksjoner i Haskell er matematiske funksjoner
-
 --
 
 ```haskell
-addOne :: Int -> Int    -- f er en relasjon fra heltall til heltall
-                        -- ... og ingenting annet!
-```
-
-- Imperative språk: funksjoner *gjør* noe
-- Deklarative språk: funksjoner *er* noe
-
----
-
-## Sterk automatisk typing
-
---
-
-### Sterk typing
-- Kompilatoren *veit* typen
-- Java, C#, C++, Scala, Haskell
-
-```java
-double circleArea(double radius) {
-  return Math.pi * radius * radius;
+teodor = Person {
+  name = "Teodor",
+  father = Person {
+    name = "Tore",
+    father = Person {
+      name = "Leif",
+      father = ???,
+      mother = ???
+    },
+    mother = ???
+  },
+  mother = ???
 }
 ```
 
---
+*Hva i all verden gjør vi når vi ikke veit hvem foreldrene er?* Er ikke adoptivbarn personer?
 
-### Automatisk typing
-- Kompilatoren kan regne ut typen på egen hånd: trenger ikke spesifiseres!
-- C# (delvis), Scala, Haskell
+---
+
+## Personer
 
 ```haskell
-circleArea r = pi * r * r     -- Som en vanlig funksjon
-circleArea = \r -> pi * r * r -- Som en anonym funksjon
+data Person = Person {
+  name :: String,
+  father :: Kanskje Person,
+  mother :: Kanskje Person
+} deriving (Show, Eq)
+```
+
+--
+
+```haskell
+leif = Person "Leif" Tull Tull
+tore = Person "Tore" (Bare leif) Tull
+
+alf = Person "Alf" Tull Tull
+hanne = Person "Hanne" (Bare alf) Tull
+
+teodor = Person "Teodor" (Bare tore) (Bare hanne)
 ```
 
 ---
 
-## Lazy
-
-Verdier evalueres når de trengs
+## Bestefedre
 
 ```haskell
-squares = map (^2) [1..]
-tenSquares = take 10 squares
+data Person = Person {
+  name :: String,
+  father :: Kanskje Person,
+  mother :: Kanskje Person
+} deriving (Show, Eq)
 ```
 
-... der take n xs returnerer de n første elemenene fra xs
+```haskell
+grandfathers :: Person -> Kanskje (Person, Person)
+```
 
 ```haskell
-take :: Int -> [a] -> [a]
+farfar :: Person -> Kanskje Person
+farfar person = case father person of Bare f -> father f
+                                      otherwise -> Tull
+
+morfar :: Person -> Kanskje Person
+morfar person = case mother person of Bare m -> father m
+                                      otherwise -> Tull
+
+bestefedre person = case farfar person of Bare ff -> case morfar person of Bare mf -> Bare (ff, mf)
+                                                                           otherwise -> Tull
+                                          otherwise -> Tull
 ```
 
 ---
