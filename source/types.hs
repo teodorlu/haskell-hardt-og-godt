@@ -15,8 +15,8 @@ data Vector3 = Vector3 Double Double Double
 scalarMult3 :: Double -> Vector3 -> Vector3
 scalarMult3 a (Vector3 x y z) = Vector3 (a*x) (a*y) (a*z)
 
-vector3Add :: Vector3 -> Double
-vector3Add (Vector3 x1 y1 z1) (Vector3 x2 y2 z2) = Vector (x1+x2) (y1+y2) (z1+z2)
+vector3Add :: Vector3 -> Vector3 -> Vector3
+vector3Add (Vector3 x1 y1 z1) (Vector3 x2 y2 z2) = Vector3 (x1+x2) (y1+y2) (z1+z2)
 
 class Vector a where
 	vectorAdd  :: a -> a -> a
