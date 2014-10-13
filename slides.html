@@ -904,22 +904,18 @@ scalarMult3 a (Vector3 x y z) = Vector3 (a*x) (a*y) (a*z)
 
 ## Algebraiske datatyper med argumenter: oppgave
 
-og en funksjon for lengden av en vektor (Pythagoras)
+og en funksjon for å legge sammen to vektorer
 ```haskell
-vector3Length :: Vector3 -> Double
-```
-gitt
-```haskell
-sqrt :: Double -> Double
+vector3Add :: Vector3 -> Vector3 -> Vector3
 ```
 
 Eksempelbruk:
 
 ```html
-Main> vector3Length (Vector3 2 1 2)
-3.0
-Main> vector3Length (Vector3 3 4 0)
-5.0
+Main> vector3Add (Vector3 2 1 2) (Vector3 4 2 0)
+Vector3 6 3 2
+Main> vector3Add (Vector3 3 4 0) (Vector3 -2 3 1)
+Vector3 1 7 1
 ```
 
 --
@@ -927,8 +923,8 @@ Main> vector3Length (Vector3 3 4 0)
 Mulig løsning:
 
 ```haskell
-vector3Length :: Vector3 -> Double
-vector3Length (Vector3 x y z) = sqrt (x*x + y*y + z*z)
+vector3Add :: Vector3 -> Vector3 -> Vector3
+vector3Add (Vector3 x1 y1 z1) (Vector3 x2 y2 z2) = Vector3 (x1+x2) (y1+y2) (z1+z2)
 ```
 
 ---
@@ -1011,19 +1007,19 @@ Egenskaper ved datatyper.
 
 ```haskell
 class Vector a where
-  vectorLength :: a -> Double
+  vectorAdd    :: a -> a -> a
   scalarMult   :: Double -> a -> a
 ```
 
-*Hvis du kan gjøre ``vectorLength`` og ``scalarMult`` på **a**, er **a** en instans av Vector*
+*Hvis du kan gjøre ``vectorAdd`` og ``scalarMult`` på **a**, er **a** en instans av Vector*
 
 --
 
-... så kan vi si at Vector3 er en Vector. Da må vi si hvordan Vector3 implementerer ``vectorLength`` og ``scalarMult``.
+... så kan vi si at Vector3 er en Vector. Da må vi si hvordan Vector3 implementerer ``vectorAdd`` og ``scalarMult``.
 
 ```haskell
 instance Vector Vector3 where
-  vectorLength = vector3Length
+  vectorAdd    = vector3Add
   scalarMult   = scalarMult3
 ```
 
@@ -1035,14 +1031,14 @@ instance Vector Vector3 where
 data Vector2 = Vector2 Double Double
   deriving (Show, Eq)
 
-vector2Length :: Vector2 -> Double
-vector2Length (Vector2 x y) = sqrt (x*x + y*y)
+vector2Add :: Vector2 -> Vector2 -> Vector2
+vector2Add (Vector2 x1 y1) (Vector2 x2 y2) = Vector2 (x1+x2) (y1+y2)
 
 scalarMult2 :: Double -> Vector2 -> Vector2
 scalarMult2 a (Vector2 x y) = Vector2 (a*x) (a*y)
 
 instance Vector Vector2 where
-  vectorLength = vector2Length
+  vectorAdd    = vector2Add
   scalarMult   = scalarMult2
 ```
 

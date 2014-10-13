@@ -15,29 +15,29 @@ data Vector3 = Vector3 Double Double Double
 scalarMult3 :: Double -> Vector3 -> Vector3
 scalarMult3 a (Vector3 x y z) = Vector3 (a*x) (a*y) (a*z)
 
-vector3Length :: Vector3 -> Double
-vector3Length (Vector3 x y z) = sqrt (x*x + y*y + z*z)
+vector3Add :: Vector3 -> Double
+vector3Add (Vector3 x1 y1 z1) (Vector3 x2 y2 z2) = Vector (x1+x2) (y1+y2) (z1+z2)
 
 class Vector a where
-	vectorLength :: a -> Double
-	scalarMult   :: Double -> a -> a
+	vectorAdd  :: a -> a -> a
+	scalarMult :: Double -> a -> a
 
 instance Vector Vector3 where
-	vectorLength = vector3Length
-	scalarMult   = scalarMult3
+	vectorAdd  = vector3Add
+	scalarMult = scalarMult3
 
 data Vector2 = Vector2 Double Double
   deriving (Show, Eq)
 
-vector2Length :: Vector2 -> Double
-vector2Length (Vector2 x y) = sqrt (x*x + y*y)
+vector2Add :: Vector2 -> Vector2 -> Vector2
+vector2Add (Vector2 x1 y1) (Vector2 x2 y2) = Vector2 (x1+x2) (y1+y2)
 
 scalarMult2 :: Double -> Vector2 -> Vector2
 scalarMult2 a (Vector2 x y) = Vector2 (a*x) (a*y)
 
 instance Vector Vector2 where
-	vectorLength = vector2Length
-	scalarMult   = scalarMult2
+	vectorAdd  = vector2Add
+	scalarMult = scalarMult2
 
 data Kanskje a = Tull | Bare a
 	deriving (Show, Eq)
