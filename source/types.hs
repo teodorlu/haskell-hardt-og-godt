@@ -94,10 +94,10 @@ combineKanskje :: Kanskje a -> Kanskje b -> Kanskje (a, b)
 combineKanskje (Bare x) (Bare y) = Bare (x, y)
 combineKanskje _        _        = Tull
 
-farfar' :: Person -> Kanskje Person
-farfar' p = (father p) `bindKanskje` father
+fathersfather' :: Person -> Kanskje Person
+fathersfather' p = (father p) `bindKanskje` father
 
-morfar' :: Person -> Kanskje Person
-morfar' p = (mother p) `bindKanskje` mother
+mothersfather' :: Person -> Kanskje Person
+mothersfather' p = (mother p) `bindKanskje` mother
 
 
