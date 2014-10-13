@@ -1,5 +1,4 @@
-main = putStr "Please enter your name " >>= \trash ->
-					getLine >>= \name ->
-					putStrLn ("Hello, " ++ name ++ "!")
-
-
+main =
+	putStrLn "Please enter your name " >>= \trash ->
+	getLine >>= \name ->
+	putStrLn ("Hello, " ++ name ++ "!")

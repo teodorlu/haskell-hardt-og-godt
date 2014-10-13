@@ -1556,6 +1556,31 @@ main = putStr "Please enter your name: " >>= \trash ->
             -- ... men navnet må vi ha.
        putStrLn ("Hello, " ++ name)
 ```
+---
+name: do
+template: inverse
+
+# Do-notasjon
+
+Monader blir en fryd!
+
+---
+
+## Do med IO
+
+Do gjør at vi slipper å bruke ``>>=`` for å hekte sammen IO.
+
+```haskell
+main = getLine >>= \name ->
+       putStrLn ("Hello, " ++ name)
+```
+
+--
+
+```
+main = getLine >>= \name ->
+       putStrLn ("Hello, " ++ name)
+```
 
 ---
 
@@ -1565,6 +1590,7 @@ template: inverse
 ## Det var alt!
 
 Slides ved hjelp av [remark](http://github.com/gnab/remark).
+
     </textarea>
     <script src="remark.min.js" type="text/javascript"></script>
     <!-- <script type="text/javascript">
