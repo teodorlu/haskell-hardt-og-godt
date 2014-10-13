@@ -53,7 +53,10 @@ data Person = Person {
 	name :: String,
 	father :: Kanskje Person,
 	mother :: Kanskje Person
-} deriving (Show, Eq)
+} deriving (Eq)
+
+instance Show Person where
+	show = name
 
 leif = Person "Leif" Tull Tull
 tore = Person "Tore" (Bare leif) Tull
@@ -63,18 +66,38 @@ hanne = Person "Hanne" (Bare alf) Tull
 
 teodor = Person "Teodor" (Bare tore) (Bare hanne)
 
-farfar :: Person -> Kanskje Person
-farfar person =
+fathersfather :: Person -> Kanskje Person
+fathersfather person =
   case father person of Bare f -> father f
                         otherwise -> Tull
 
-morfar :: Person -> Kanskje Person
-morfar person =
+mothersfather :: Person -> Kanskje Person
+mothersfather person =
   case mother person of Bare m -> father m
                         otherwise -> Tull
 
-bestefedre person =
-  case farfar person of Bare ff ->
-                          case morfar person of Bare mf -> Bare (ff, mf)
-                                                otherwise -> Tull
-                        otherwise -> Tull
+grandfathers person =
+  case fathersfather person of Bare ff ->
+                                 case mothersfather person of Bare mf -> Bare (ff, mf)
+                                                              otherwise -> Tull
+                               otherwise -> Tull
+
+bindKanskjePerson :: Kanskje Person -> (Person -> Kanskje Person) -> Kanskje Person
+bindKanskjePerson Tull     _ = Tull
+bindKanskjePerson (Bare p) f = f p
+
+bindKanskje :: Kanskje a -> (a -> Kanskje b) -> Kanskje b
+bindKanskje (Bare x) f = f x
+bindKanskje Tull     _ = Tull
+
+combineKanskje :: Kanskje a -> Kanskje b -> Kanskje (a, b)
+combineKanskje (Bare x) (Bare y) = Bare (x, y)
+combineKanskje _        _        = Tull
+
+farfar' :: Person -> Kanskje Person
+farfar' p = (father p) `bindKanskje` father
+
+morfar' :: Person -> Kanskje Person
+morfar' p = (mother p) `bindKanskje` mother
+
+
