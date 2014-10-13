@@ -74,6 +74,7 @@ morfar person =
                         otherwise -> Tull
 
 bestefedre person =
-  case farfar person of Bare ff -> case morfar person of Bare mf -> Bare (ff, mf)
-                                                         otherwise -> Tull
+  case farfar person of Bare ff ->
+                          case morfar person of Bare mf -> Bare (ff, mf)
+                                                otherwise -> Tull
                         otherwise -> Tull
