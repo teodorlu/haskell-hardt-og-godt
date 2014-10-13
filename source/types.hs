@@ -73,6 +73,7 @@ morfar person =
   case mother person of Bare m -> father m
                         otherwise -> Tull
 
-bestefedre person = case farfar person of Bare ff -> case morfar person of Bare mf -> Bare (ff, mf)
-                                                                           otherwise -> Tull
-                                          otherwise -> Tull
+bestefedre person =
+  case farfar person of Bare ff -> case morfar person of Bare mf -> Bare (ff, mf)
+                                                         otherwise -> Tull
+                        otherwise -> Tull
