@@ -1566,7 +1566,7 @@ Monader blir en fryd!
 
 ---
 
-## Do med IO
+## Do it with IO!
 
 Do gjør at vi slipper å bruke ``>>=`` for å hekte sammen IO.
 
@@ -1585,10 +1585,51 @@ main = do
   name <- getLine
   putStrLn ("Hello, " ++ name ++ "!")
 ```
-
 --
 
 ``do`` hekter sammen monader.
+
+---
+
+## Do it Kanskje?
+
+```haskell
+grandfathers'' p = do
+  ff <- father p >>= father
+  mf <- mother p >>= father
+  return (ff, mf)
+```
+
+--
+
+``<-`` gir oss en ren type. For ``Kanskje Person`` er dette en ``Person``.
+
+La oss brekke den!
+
+```haskell
+grandfathers'' p = do
+  ff <- father p >>= father
+  mf <- mother p >>= father
+  _  <- Tull
+  return (ff, mf)
+```
+
+---
+
+## Do make dem lists
+
+```haskell
+import Control.Monad (guard)
+
+pythagoreans = do
+  z <- [1..]
+  y <- [1..z]
+  x <- [1..y]
+  guard (x*x + y*y == z*z)
+  return (x, y, z)
+```
+
+Guard brekker monaden når den får inn ``True``, og lar den fortsette om den får inn ``False``.
 
 ---
 
