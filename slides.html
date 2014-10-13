@@ -1571,16 +1571,24 @@ Monader blir en fryd!
 Do gjør at vi slipper å bruke ``>>=`` for å hekte sammen IO.
 
 ```haskell
-main = getLine >>= \name ->
-       putStrLn ("Hello, " ++ name)
+main =
+  getLine >>= \name ->
+  putStrLn ("Hello, " ++ name ++ "!")
 ```
 
 --
 
+Med do-notasjon kan vi gjøre dette mer lesbart. ``<-`` er bare lov med do-notasjon.
+
+```haskell
+main = do
+  name <- getLine
+  putStrLn ("Hello, " ++ name ++ "!")
 ```
-main = getLine >>= \name ->
-       putStrLn ("Hello, " ++ name)
-```
+
+--
+
+``do`` hekter sammen monader.
 
 ---
 

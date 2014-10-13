@@ -1,3 +1,5 @@
+module Types where
+
 data TrafficLightState = RedLight | YellowLight | GreenLight
   deriving (Show, Eq)
 
