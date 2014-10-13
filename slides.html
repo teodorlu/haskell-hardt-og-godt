@@ -1096,18 +1096,6 @@ atIndex (x:xs) i
   | otherwise = atIndex xs (i-1)
 ```
 
---
-
-Hvorfor norsk?
-
---
-
-```haskell
-data Maybe a = Just a | Nothing
-```
-
-``Kanskje`` finnes allerede!
-
 ---
 
 ## Personer
@@ -1144,7 +1132,7 @@ teodor = Person {
 
 ---
 
-## Personer
+## Personer (2)
 
 ```haskell
 data Person = Person {
@@ -1182,19 +1170,257 @@ data Person = Person {
 grandfathers :: Person -> Kanskje (Person, Person)
 ```
 
-```haskell
-farfar :: Person -> Kanskje Person
-farfar person = case father person of Bare f -> father f
-                                      otherwise -> Tull
+Eksempel på bruk:
 
-morfar :: Person -> Kanskje Person
-morfar person = case mother person of Bare m -> father m
-                                      otherwise -> Tull
-
-bestefedre person = case farfar person of Bare ff -> case morfar person of Bare mf -> Bare (ff, mf)
-                                                                           otherwise -> Tull
-                                          otherwise -> Tull
+```html
+*Main> grandfathers teodor
+Bare (Leif,Alf)
+*Main> grandfathers tore
+Tull
+*Main> grandfathers hanne
+Tull
 ```
+
+---
+
+## Bestefedre, java
+
+```java
+public class Person {
+    public String name;
+    public Person father;
+    public Person mother;
+
+    public Person[] grandFathers() {
+        if (father != null) {
+            if (father.father != null) {
+                if (mother != null) {
+                    if (mother.mother != null) {
+                        return new Person[]{father.father, mother.mother};
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+}
+```
+
+(Java har ikke noen tuppel-type, så vi bruker en ``Array``.)
+
+---
+
+## Bestefedre, java-aktig haskell
+
+```haskell
+fathersfather :: Person -> Kanskje Person
+fathersfather person =
+  case father person of Bare f -> father f
+                        otherwise -> Tull
+
+mothersfather :: Person -> Kanskje Person
+mothersfather person =
+  case mother person of Bare m -> father m
+                        otherwise -> Tull
+
+bestefedre person =
+  case fathersfather person of Bare ff ->
+                                 case mothersfather person of Bare mf -> Bare (ff, mf)
+                                                              otherwise -> Tull
+                               otherwise -> Tull
+```
+
+Grusomt. Får ikke engang plass på sliden. Hint om at vi gjør noe dårlig.
+
+.footnote[Her bruker vi ``case``-setninger. De trenger vi ikke videre, så vi bruker ikke tid på det.]
+
+---
+
+## Infix-funksjoner
+
+- ``add 2 3`` gir ``5``
+- ``2 `add` 3`` gir ``5``
+
+Vi kan sette backticks (`` ` ` ``) rundt funksjoner for å bruke funksjoner *mellom* argumentene.
+
+På et norsk tastatur får man en backtick ved å trykke ``Shift+\`` to ganger.
+
+---
+
+## Bestefedreproblematikk
+
+Styggheten oppstår når vi vi skal putte inn ``Kanskje Person`` i en funksjon av typen ``Person -> Kanskje Person``.
+
+Det lager vi en funksjon til!
+
+```haskell
+bindKanskjePerson :: Kanskje Person -> (Person->Kanskje Person) -> Kanskje Person
+bindKanskjePerson Tull     _ = Tull
+bindKanskjePerson (Bare p) f = f p
+```
+
+--
+
+Hmm. Vi bruker jo ingen egenskaper fra Person. Kan gjøre det for alle typer!
+
+--
+
+```haskell
+bindKanskje :: Kanskje a -> (a -> Kanskje b) -> Kanskje b
+bindKanskje (Bare x) f = f x
+bindKanskje Tull     _ = Tull
+```
+
+--
+
+Hva med å samle flere kanskje-verdier i en tuppel?
+
+```haskell
+combineKanskje :: Kanskje a -> Kanskje b -> Kanskje (a, b)
+combineKanskje (Bare x) (Bare y) = Bare (x, y)
+combineKanskje _        _        = Tull
+```
+---
+
+## Besteforeldre sånn de skal være
+
+```haskell
+fathersfather' :: Person -> Kanskje Person
+fathersfather' p = bindKanskje (father p) father
+
+mothersfather' :: Person -> Kanskje Person
+mothersfather' p = bindKanskje (mother p) mother
+
+grandfathers' p = combineKanskje (fathersfather' p) (mothersfather' p)
+```
+
+---
+
+## Kanskje en monade?
+
+``Monad`` er en typeklasse:
+
+```haskell
+class Monad m where
+  (>>=) :: m a -> (a -> m b) -> m b  -- >>= uttales "bind"
+  return :: a -> m a
+```
+
+Hmm, ``(>>=)`` virker litt kjent.
+
+--
+
+Hva om ``m`` er ``Kanskje``?
+
+--
+
+```haskell
+(>>=) :: Kanskje a -> (a -> Kanskje b) -> Kanskje b
+```
+--
+
+Næmmen! ``(>>=)`` har vi jo allerede laget!
+
+```haskell
+bindKanskje :: Kanskje a -> (a -> Kanskje b) -> Kanskje b
+```
+
+---
+
+## Kanskje en monade? (2)
+
+``Monad`` er en typeklasse:
+
+```haskell
+class Monad m where
+  (>>=) :: m a -> (a -> m b) -> m b
+  return :: a -> m a
+```
+
+``return`` pakker inn en verdi.
+
+--
+
+Setter ``m`` til ``Kanskje``.
+
+```haskell
+return :: a -> Kanskje a
+```
+
+Hmm. Typen til ``father`` stemmer, men vi skal da pakke inn personen, ikke faren.
+
+--
+
+Hva med ``Bare``?
+
+```html
+Main> :t Bare
+Bare :: a -> Kanskje a
+```
+
+---
+
+## Kanskje er en monade!
+
+(Etter vi har sagt hvordan)
+
+```haskell
+class Monad m where
+  (>>=) :: m a -> (a -> m b) -> m b
+  return :: a -> m a
+```
+
+```haskell
+instance Monad Kanskje where
+  (>>=) = bindKanskje
+  return = Bare
+```
+
+--
+
+```html
+Main> (Bare teodor) >>= father
+Bare Tore
+Main> (Bare teodor) >>= father >>= father
+Bare Leif
+Main> (Bare teodor) >>= father >>= father >>= father
+Tull
+```
+
+```html
+Main> (Bare teodor) >>= mother
+Bare Hanne
+Main> (Bare teodor) >>= mother >>= mother
+Tull
+Main> (Bare teodor) >>= mother >>= father
+Bare Alf
+```
+
+---
+
+## Maybe
+
+Kanskje kan være nyttig. Og den finnes allerede!
+
+```html
+Main> :info Maybe
+data Maybe a = Nothing | Just a   -- Defined in `Data.Maybe'
+instance Eq a => Eq (Maybe a) -- Defined in `Data.Maybe'
+instance Monad Maybe -- Defined in `Data.Maybe'
+instance Functor Maybe -- Defined in `Data.Maybe'
+instance Ord a => Ord (Maybe a) -- Defined in `Data.Maybe'
+instance Read a => Read (Maybe a) -- Defined in `GHC.Read'
+instance Show a => Show (Maybe a) -- Defined in `GHC.Show'
+```
+
+---
+template: inverse
+name: io
+
+# IO
+
+Skitten på overflaten, sjokolade inni
 
 ---
 
