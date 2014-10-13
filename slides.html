@@ -1420,7 +1420,142 @@ name: io
 
 # IO
 
-Skitten på overflaten, sjokolade inni
+Skitten på overflaten, silkemyk inni.
+
+---
+
+## Hello, World
+
+```haskell
+main = putStrLn "Ohai. This is from Haskell!"
+```
+
+Kan nå kjøre programmet i kommandolinja
+
+```html
+> runhaskell hello.hs 
+Ohai. This is from Haskell!
+```
+
+---
+
+## Ren IO
+
+IO kan gjøre hva som helst. Hva kan da typen til IO-funksjoner være?
+
+--
+
+IO har tilgang til verden sånn som den er, og endrer verden til noe annet.
+
+--
+
+```haskell
+main :: World -> World
+```
+
+.footnote[Grovt forenkla. GHC godtar ikke dette.]
+--
+
+Vi må komplisere dette *litt* så vi får med alt vi trenger.
+
+```haskell
+main :: World -> ((), World)
+```
+
+``()`` er den tomme typen.
+
+---
+
+## IO-funksjoner
+
+For å gjøre noe nyttig, trenger vi input fra brukeren:
+
+```haskell
+getLine :: World -> (String, World)
+```
+
+... der får vi bruk for den ekstra "plassen" vår!
+
+--
+
+Hva med typen til ``putStrLn``, som skriver ut tekst på ei ny linje?
+
+--
+
+Den er også en verdenstransformasjon når den har fått input!
+
+```haskell
+putStrLn "Hello, there!" :: World -> ((), World)
+```
+
+--
+
+```haskell
+putStrLn :: String -> ( World -> ((), World) )
+```
+
+```haskell
+putStrLn :: String -> World -> ((), World)
+```
+
+---
+
+## Hello, World med ny syntaks
+
+Når main skal ha signaturen
+
+```haskell
+main :: World -> World
+```
+
+får vi
+
+```haskell
+main w0 = let (_, w1) = putStrLn "Hello!" w0 in
+          w1
+```
+
+---
+
+## ... så legger vi på litt
+
+```haskell
+main w0 = let (_   , w1) = putStr "Please enter your name: " in
+          let (name, w2) = getLine w1 in
+          let (_   , w3) = putStrLn ("Hello, " ++ name) w2 in
+          w2
+```
+
+---
+
+## Alle let-ene her ble stygt. Kanskje monader kan redde dagen?
+
+Vi prøver.
+
+```haskell
+bindIO :: (World -> (a,World))
+          -> (a -> (World -> (b,World)))
+          -> (World -> (b,World))
+```
+--
+
+Typene for ``getLine`` og ``putStrLn`` (og ``putStr``) har vi:
+
+```haskell
+getLine :: World -> (String, World)
+putStrLn :: String -> World -> ((), World)
+```
+
+--
+... og da kan vi skrive et program som kommuniserer med verden!
+
+```haskell
+main = putStr "Please enter your name: " >>= \trash ->
+            -- putStr returnerer ingenting nyttig,
+       getLine >>= \name ->
+            -- ... men navnet må vi ha.
+       putStrLn ("Hello, " ++ name)
+```
 
 ---
 
