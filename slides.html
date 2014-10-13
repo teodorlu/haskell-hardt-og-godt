@@ -136,6 +136,7 @@ layout: false
 2. Funksjoner
 2. Lister
 3. Typer
+3. Haskell
 4. Monader
 5. IO
 
@@ -662,7 +663,7 @@ filter' cond (x:xs)
 ```
 
 ---
-
+name: datatyper
 template: inverse
 
 # Algebraiske datatyper
@@ -681,7 +682,7 @@ Virkelig, gløm det.
 
 --
 
-Typesystemet til Haskell er overlegent bedre.
+Typesystemet til Haskell er overlegent i forhold.
 
 ---
 
@@ -704,6 +705,19 @@ data TrafficLightState = RedLight | YellowLight | GreenLight
 .footnote[``deriving (Show, Eq)`` betyr at Haskell finner ut hvordan denne typen skal vises (``Show``) og sjekkes for likhet (``Eq``). Denne jobben skal vi gjøre selv seinere.]
 
 Et trafikklys er enten rødt, gult eller grønt.
+
+--
+
+### Store bokstaver har noe å si!
+
+- Typer må ha stor forbokstav
+  - ``Int``
+  - ``String``
+  - ``TrafficLightState``
+- Verdier må ha liten forbokstav
+  - ``filter``
+  - ``pi``
+  - ``n``
 
 ---
 
@@ -733,9 +747,185 @@ shouldStop    speed       YellowLight        = speed == SlowDriving
 ```
 ---
 
-## En 
+## Algebraiske datatyper med argumenter
+
+```haskell
+data Vector3 = Vector3 Double Double Double
+  deriving (Show, Eq)
+```
+
+Litt bruk: 
+
+```html
+Main> Vector3 3 4 5
+Vector3 3.0 4.0 5.0
+Main> let v = Vector3 3 4 5
+Main> let Vector3 x y z = v
+Main> (x, y, z)
+(3.0,4.0,5.0)
+```
 
 ---
+
+## Algebraiske datatyper med argumenter: oppgave
+
+```haskell
+data Vector3 = Vector3 Double Double Double
+  deriving (Show, Eq)
+```
+
+Lag en funksjon for å gange en skalar med en vektor
+```haskell
+scalarMult3 :: Double -> Vector3 -> Vector3
+```
+
+Eksempelbruk:
+```html
+Main> scalarMult3 2 (Vector3 2 1 2)
+Vector3 4.0 2.0 4.0
+Main> scalarMult3 (-3) (Vector3 2 1 2)
+Vector3 (-6.0) (-3.0) (-6.0)
+```
+
+--
+
+Kanskje gjorde dere noe sånt,
+
+```haskell
+scalarMult3 :: Double -> Vector3 -> Vector3
+scalarMult3 a (Vector3 x y z) = Vector3 (a*x) (a*y) (a*z)
+```
+
+---
+
+## Algebraiske datatyper med argumenter: oppgave
+
+og en funksjon for lengden av en vektor (Pythagoras)
+```haskell
+vector3Length :: Vector3 -> Double
+```
+gitt
+```haskell
+sqrt :: Double -> Double
+```
+
+Eksempelbruk:
+
+```html
+Main> vector3Length (Vector3 2 1 2)
+3.0
+Main> vector3Length (Vector3 3 4 0)
+5.0
+```
+
+--
+
+Mulig løsning:
+
+```haskell
+vector3Length :: Vector3 -> Double
+vector3Length (Vector3 x y z) = sqrt (x*x + y*y + z*z)
+```
+
+---
+
+## Records: felter har navn
+
+```haskell
+data PersonInfo = PersonInfo {
+  name :: String,
+  age :: Int
+}
+  deriving (Show, Eq)
+```
+
+--
+
+Litt bruk:
+
+```html
+Main> let teodor = PersonInfo {name = "Teodor", age = 23}
+Main> teodor
+PersonInfo {name = "Teodor", age = 23}
+Main> let frans = PersonInfo "Frans" 24
+Main> frans
+PersonInfo {name = "Frans", age = 24}
+Main> name teodor 
+"Teodor"
+Main> age frans 
+24
+```
+
+--
+
+``name`` og ``age`` er autogenererte funksjoner:
+
+```html
+Main> :t name
+name :: PersonInfo -> String
+Main> :t age
+age :: PersonInfo -> Int
+```
+
+---
+name: typeklasser
+template: inverse
+
+# Typeklasser
+
+Egenskaper ved datatyper
+
+--
+
+.footnote[Har ingenting med klasser i Java å gjøre!]
+
+---
+
+## En typeklasse for alle vektorer
+
+... ikke bare de som er i 3D!
+
+--
+
+```haskell
+class Vector a where
+  vectorLength :: a -> Double
+  scalarMult   :: Double -> a -> a
+```
+
+*Hvis du kan gjøre ``vectorLength`` og ``scalarMult`` på **a**, er **a** en instans av Vector*
+
+--
+
+... så kan vi si at Vector3 er en Vector. Da må vi si hvordan Vector3 implementerer ``vectorLength`` og ``scalarMult``.
+
+```haskell
+instance Vector Vector3 where
+  vectorLength = vector3Length
+  scalarMult   = scalarMult3
+```
+
+---
+
+## Tilsvarende for todimensjonale vektorer
+
+```haskell
+data Vector2 = Vector2 Double Double
+  deriving (Show, Eq)
+
+vector2Length :: Vector2 -> Double
+vector3Length (Vector2 x y) = sqrt (x*x + y*y)
+
+scalarMult2 :: Double -> Vector2 -> Vector2
+scalarMult2 a (Vector2 x y) = Vector2 (a*x) (a*y)
+
+instance Vector Vector2 where
+  vectorLength = vector2Length
+  scalarMult   = scalarMult2
+```
+
+---
+name: om-haskell
 template:inverse
 
 # Programmeringsspråket Haskell
@@ -777,7 +967,6 @@ int getAge(Person person) {
 
   - er en relasjon fra en mengde (type) til en annen
   - **Og ingenting annet!**
-
 
 --
 
