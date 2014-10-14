@@ -199,7 +199,7 @@ Rett på sak.
 ## Funksjonssyntax
 
 ```haskell
-         add      x y  =  x + y
+addOne           x     =  x + 1
 -- funksjonsnavn input    output
 -- (Kommentarer starter med --)
 ```
@@ -219,7 +219,19 @@ Main> addOne 1
 2
 ```
 
+Merk: ingen paranteser!
+
 ---
+
+## Noen funksjoner til
+
+```haskell
+add2 x y = x + y
+add3 x y z = x + add2 y z
+hypothenusLength a b = sqrt (a + b) 
+```
+
+--
 ## Funksjonssyntax: oppgave
 
 Implementér denne java-funksjonen i Haskell:
@@ -249,8 +261,7 @@ isTeodor navn     = False
 
 --
 
-... men vi trenger egentlig ikke bruke navn i det hele tatt! _ matcher alt.
-
+... men vi bruker jo ikke ``navn``. _ matcher alt.
 
 ```haskell
 isTeodor "Teodor" = True
@@ -382,13 +393,23 @@ Main> (+) 1 2
 ```
 
 --
-Rekkefølgen er som vi forventer:
+Rekkefølgen blir bevart
 
 ```html
-Main> (2/) 5
+Prelude> (2/) 5
 0.4
-Main> (5/) 2
+Prelude> (/2) 5
 2.5
+```
+
+---
+
+## Funksjoner som verdier
+
+*Høyere ordens programmering*
+
+```haskell
+applyToBothThenAdd f x y = add (f x) (f y)
 ```
 
 ---
@@ -1633,6 +1654,8 @@ name: last-page
 template: inverse
 
 ## Det var alt!
+
+Takk til Erik for input.
 
 Slides ved hjelp av [remark](http://github.com/gnab/remark).
 
