@@ -732,7 +732,7 @@ map' f [] = []
 Da kan vi lage en som matcher lister med ett element eller flere:
 
 ```haskell
-map' f (x:xs) = f x : map f xs
+map' f (x:xs) = f x : map' f xs
 ```
 
 ???
