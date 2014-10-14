@@ -439,7 +439,7 @@ Hva er typene til ``compose`` og ``doTwice``?
 --
 
 ```haskell
-compose :: (b -> c) (a -> b) -> a -> c
+compose :: (b -> c) -> (a -> b) -> a -> c
 compose f g x = f (g x)
 
 doTwice :: (a -> a) -> a -> a
