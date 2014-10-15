@@ -134,9 +134,9 @@ layout: false
 
 1. Oppsett
 2. Funksjoner
-2. Lister
 3. Typer
 3. Haskell
+2. Lister
 4. Monader
 5. IO
 
@@ -228,7 +228,7 @@ Merk: ingen paranteser!
 ```haskell
 add2 x y = x + y
 add3 x y z = x + add2 y z
-hypothenusLength a b = sqrt (a + b) 
+hypothenusLength a b = sqrt (a*a + b*b)
 ```
 
 --
@@ -240,6 +240,14 @@ Implementér denne java-funksjonen i Haskell:
 int squaredSum(int x, int y) {
   return x * x + y * y
 }
+```
+
+Samme i Matlab:
+
+```matlab
+function s = squaredSum(x, y)
+s = x*x + y*y
+end
 ```
 
 --
@@ -328,6 +336,7 @@ Main> addOne 4
 ```html
 Main> :t addOne 
 addOne :: Int -> Int
+Main> :t \x -> x + 1
 \x -> x + 1 :: Num a => a -> a
 ```
 
@@ -414,7 +423,7 @@ applyToBothThenAdd f x y = add (f x) (f y)
 
 ---
 
-## Vanskeligere oppgave
+## Funksjoner som verdier: oppgave 1
 
 Lag funksjonen ``doTwice`` som tar inn en funksjon ``f`` og et argument ``x``. Returner f(f(x)).
 
@@ -432,9 +441,41 @@ Eksempelbruk:
 doTwice f x = f (f x)
 ```
 
+--
+
+Hva med ``do3times``?
+
+--
+
+```haskell
+do3times f x = f (f (f x))
+```
+
 ---
 
-## Enda vanskeligere oppgave
+## Funksjoner som verdier: oppgave 2
+
+Lag funksjonen ``doNTimes``.
+
+```haskell
+doNTimes 0 f x = x
+doNTimes n f x = ???
+```
+
+Prøv å uttrykke steg ``n`` ved steg `n-1`.
+
+--
+
+```haskell
+doNTimes 0 f x = x
+doNTimes n f x = doNTimes (n-1) f (f x)
+```
+
+---
+
+name: compose
+
+## Funksjoner som verdier: oppgave 3
 
 - Lag funksjonen ``compose`` som tar inn to funksjoner ``f`` og ``g`` og et argument ``x``, og returnerer f(g(x)).
 
@@ -446,11 +487,23 @@ doTwice f x = f (f x)
 
 ```haskell
 compose f g x = f (g x)
-doTwice f = compose f f
+```
+
+--
+
+```haskell
+doTwice' f = compose f f
+doTwice'' f x = (compose f f) x  -- Alternativt
+```
+
+--
+
+```haskell
 plusTwoTimesThree = compose (*3) (+2)
 ```
 
 --
+
 Hva er typene til ``compose`` og ``doTwice``?
 
 ???
@@ -460,20 +513,18 @@ Hva er typene til ``compose`` og ``doTwice``?
 --
 
 ```haskell
-compose :: (b -> c) (a -> b) -> a -> c
+compose :: (b -> c) -> (a -> b) -> a -> c
 compose f g x = f (g x)
 
 doTwice :: (a -> a) -> a -> a
 doTwice f = compose f f
 
 ```
-???
-NOte
 
 ---
 name: om-haskell
 template:inverse
-
+1
 # Programmeringsspråket Haskell
 Ulikt alt annet du har sett
 
@@ -551,8 +602,8 @@ double circleArea(double radius) {
 - C# (delvis), Scala, Haskell
 
 ```haskell
-circleArea r = pi * r * r     -- Som en vanlig funksjon
-circleArea = \r -> pi * r * r -- Som en anonym funksjon
+circleArea  r = pi * r * r     -- Som en vanlig funksjon
+circleArea' = \r -> pi * r * r -- Som en anonym funksjon
 ```
 
 ---
@@ -571,8 +622,6 @@ tenSquares = take 10 squares
 ```haskell
 take :: Int -> [a] -> [a]
 ```
-
-
 
 ---
 template: inverse
@@ -604,7 +653,7 @@ Main> ['a','b','c']
 
 ---
 
-## Å endre lister i Haskell
+## "Endring" lister i Haskell
 
 Legg til elementer med ``:`` og pattern matching
 
@@ -1655,7 +1704,7 @@ template: inverse
 
 ## Det var alt!
 
-Takk til Erik for input.
+Takk til Erik og Tor for input underveis.
 
 Slides ved hjelp av [remark](http://github.com/gnab/remark).
 
