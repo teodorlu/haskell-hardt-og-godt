@@ -3,7 +3,7 @@
 En introduksjon til Haskell med noe for enhver.
 [Slides][slides-host]. Løst program følger.
 
-[slides-host]: todo
+[slides-host]: https://haskell-hardt-og-godt.pages.dev/
 
 - **Lovnad**: det vil komme noe du skjønner
 - **Lovnad**: det vil komme noe du ikke skjønner
